@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Aqua Meter",
+    "slug": "ClearMeter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jonathan.aquameter",
+      "config": {
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "NSPhotoLibraryUsageDescription": "Allow Aqua Meter to access your photos to set your profile picture."
+      }
+    },
+    "android": {
+      "package": "com.jonathan.clearmeter",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "WAKE_LOCK",
+        "com.google.android.c2dm.permission.RECEIVE",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      "expo-notifications",
+      "expo-font"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ab76c7c2-31fd-4f0e-83f4-e71f94bb98ce"
+      }
+    },
+    "owner": "jonathan45668"
+  }
+}
