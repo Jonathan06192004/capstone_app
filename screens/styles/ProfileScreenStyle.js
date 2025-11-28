@@ -1,240 +1,269 @@
 import { StyleSheet, Dimensions } from "react-native";
 
-const screenWidth = Dimensions.get("window").width;
+const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#EFEFF4",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 20,
-    paddingBottom: 80,
-  },
+ container: {
+  flex: 1,
+  backgroundColor: "#F5F8FA", // Light background color
+ },
+ scrollContent: {
+  padding: 20,
+  paddingBottom: 100, // Ensure space above footer
+ },
 
-  // Header (UNCHANGED as requested)
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#1D3B66",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    paddingTop: 50,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 5,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  headerLogo: {
-    width: 60,
-    height: 60,
-    resizeMode: "contain",
-  },
+ // ========================
+ // 💧 HEADER STYLE (MATCHES TREND LINE SCREEN)
+ // ========================
+ header: {
+  backgroundColor: "#1D3B66", // Primary Dark Blue
+  flexDirection: "row",
+  justifyContent: "space-between", // Maintain spacing for Title and Logo
+  alignItems: "center",
+  paddingHorizontal: 20,
+  paddingVertical: 20,
+  paddingTop: 50,
+  borderBottomLeftRadius: 20, // Rounded bottom corners
+  borderBottomRightRadius: 20,
+  // Stronger, more prominent shadow/elevation
+  elevation: 8,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 5.46,
+ },
 
-  // Profile Card (Updated Shadow)
-  profileCard: {
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 25,
-    alignItems: "center",
-    marginVertical: 20,
-    // Enhanced Shadow
-    elevation: 8,
-    shadowColor: "#1D3B66",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5.46,
-  },
-  profileImageContainer: {
-    position: "relative",
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
-    borderColor: "#1D3B66",
-  },
-  editIconContainer: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    padding: 8,
-    borderRadius: 20,
-  },
+ headerTitle: {
+  color: "#fff", // White text
+  fontSize: 22, // Slightly larger
+  fontWeight: "bold",
+  letterSpacing: 1,
+ },
+ headerLogo: {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+ },
 
-  profileName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 15,
-  },
-  profileDetails: {
-    fontSize: 16,
-    color: "#777",
-    marginTop: 5,
-  },
+ // Profile Card Styles
+ profileCard: {
+  backgroundColor: "#fff",
+  borderRadius: 15,
+  padding: 20,
+  alignItems: "center",
+  marginBottom: 20,
+  shadowColor: "#1D3B66",
+  shadowOffset: { width: 0, height: 5 },
+  shadowOpacity: 0.15,
+  shadowRadius: 10,
+  elevation: 8,
+ },
+ profileImageContainer: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  backgroundColor: "#ccc",
+  marginBottom: 15,
+  position: "relative",
+ },
+ profileImage: {
+  width: "100%",
+  height: "100%",
+  borderRadius: 50,
+ },
+ editIconContainer: {
+  position: "absolute",
+  bottom: 0,
+  right: 0,
+  backgroundColor: "#3E5C76", // Darker blue for edit icon
+  borderRadius: 15,
+  padding: 5,
+ },
+ profileName: {
+  fontSize: 24,
+  fontWeight: "bold",
+  color: "#1D3B66",
+  marginBottom: 5,
+  textAlign: "center",
+ },
+ profileDetails: {
+  fontSize: 16,
+  color: "#666",
+  textAlign: "center",
+ },
 
-  editInput: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#1D3B66",
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 15,
-    fontSize: 16,
-  },
-  editInputSmall: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#1D3B66",
-    borderRadius: 10,
-    padding: 8,
-    fontSize: 16,
-    marginLeft: 10,
-  },
+ // Details Card Styles
+ detailsCard: {
+  backgroundColor: "#fff",
+  borderRadius: 15,
+  padding: 20,
+  marginBottom: 20,
+  shadowColor: "#1D3B66",
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.1,
+  shadowRadius: 5,
+  elevation: 5,
+ },
+ sectionTitle: {
+  fontSize: 18,
+  fontWeight: "bold",
+  color: "#1D3B66",
+  marginBottom: 15,
+  borderBottomWidth: 1,
+  borderBottomColor: "#eee",
+  paddingBottom: 5,
+ },
+ detailRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: "#f0f0f0",
+ },
+ detailIcon: {
+  marginRight: 15,
+ },
+ detailText: {
+  fontSize: 16,
+  color: "#333",
+  flexShrink: 1,
+ },
+ toggleRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  paddingVertical: 10,
+ },
 
-  // Details Card (Updated Shadow)
-  detailsCard: {
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 20,
-    marginVertical: 10,
-    // Enhanced Shadow
-    elevation: 8,
-    shadowColor: "#1D3B66",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5.46,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1D3B66",
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EDEDED",
-    paddingBottom: 10,
-  },
+ // Edit Mode Styles
+ editInput: {
+  width: "100%",
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 8,
+  padding: 10,
+  marginBottom: 10,
+  fontSize: 16,
+  color: "#333",
+  textAlign: "center",
+ },
+ editInputSmall: {
+  flex: 1, // Take up remaining space
+  borderWidth: 1,
+  borderColor: "#ccc",
+  borderRadius: 8,
+  padding: 10,
+  fontSize: 16,
+  color: "#333",
+ },
 
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  detailIcon: {
-    marginRight: 15,
-  },
-  detailText: {
-    fontSize: 16,
-    color: "#555",
-  },
+ // Buttons
+ editButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#1D3B66",
+  borderRadius: 8,
+  padding: 15,
+  marginBottom: 10,
+ },
+ editButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#1D3B66",
+  marginLeft: 10,
+ },
+ saveButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#3E5C76", // Success color
+  borderRadius: 8,
+  padding: 15,
+  marginBottom: 10,
+ },
+ saveButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#fff",
+  marginLeft: 10,
+ },
+ cancelButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#FF6347", // Tomato red
+  borderRadius: 8,
+  padding: 15,
+  marginBottom: 20,
+ },
+ cancelButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#FF6347",
+  marginLeft: 10,
+ },
 
-  // NEW TOGGLE ROW
-  toggleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 15,
-  },
+ // Logout Button
+ logoutButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#FFF0F0", // Very light red background
+  borderRadius: 8,
+  padding: 15,
+  borderWidth: 1,
+  borderColor: "#FF6347",
+ },
+ logoutText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#FF6347",
+  marginLeft: 10,
+ },
 
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 15,
-    borderRadius: 15,
-    marginTop: 10,
-    elevation: 3,
-  },
-  editButtonText: {
-    marginLeft: 10,
-    color: "#1D3B66",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  saveButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#1D3B66",
-    paddingVertical: 15,
-    borderRadius: 15,
-    marginTop: 10,
-  },
-  saveButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  cancelButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 15,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#FF6347",
-    marginTop: 10,
-  },
-  cancelButtonText: {
-    marginLeft: 10,
-    color: "#FF6347",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 15,
-    borderRadius: 15,
-    marginTop: 20,
-    elevation: 3,
-  },
-  logoutText: {
-    color: "#FF6347",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginLeft: 10,
-  },
-
-  // Footer (Updated Style)
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#C2E6F5", // Lightest Blue
-    paddingVertical: 15, // More padding
-    borderTopLeftRadius: 25, // More rounded corners
-    borderTopRightRadius: 25,
-    // Distinctive, clean shadow
-    elevation: 10,
-    shadowColor: "#1D3B66",
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  footerIcon: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+ // ========================
+ // 🧭 FOOTER STYLE (MATCHES TREND LINE SCREEN)
+ // ========================
+ footer: {
+  flexDirection: "row",
+  justifyContent: "space-around",
+  alignItems: "center",
+  backgroundColor: "#C2E6F5", // Light blue background
+  paddingVertical: 1,
+  borderTopLeftRadius: 25,
+  borderTopRightRadius: 25,
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  elevation: 15,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: -5 },
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  paddingHorizontal: 10,
+ },
+ footerIcon: {
+  flex: 1,
+  alignItems: "center",
+ },
+ activeIconWrapper: {
+  backgroundColor: "#1D3B66", // Dark Blue background
+  borderRadius: 35, // Circular shape
+  width: 55, // Size of the circle
+  height: 55, // Size of the circle
+  justifyContent: "center",
+  alignItems: "center",
+  // Optional: lift the active icon slightly
+  transform: [{ translateY: -10 }],
+  shadowColor: "#1D3B66",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4.65,
+  elevation: 8,
+ },
 });
