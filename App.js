@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Notifications from "expo-notifications";
-import { listenForNotifications } from "./services/NotificationService"; // ✅ Import your listener
-import { app } from "./firebaseConfig"; // ✅ Firebase initialized
+import { listenForNotifications } from "./services/NotificationService";
+import { app } from "./firebaseConfig";
 
 // Screens
 import LoginScreen from "./screens/LoginScreen";
@@ -17,6 +17,7 @@ import WaterBillRecords from "./screens/WaterBillRecords";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import TrendLineScreen from "./screens/TrendLineScreen";
+import DeviceStatusScreen from "./screens/DeviceStatusScreen"; // ✅ NEW
 
 const Stack = createNativeStackNavigator();
 
@@ -33,10 +34,10 @@ export default function App() {
   useEffect(() => {
     console.log("🚀 App mounted — setting up listeners...");
 
-    // ✅ Start listening for notifications (Firebase + Expo)
+    // ✅ Start listening for notifications
     const cleanup = listenForNotifications();
 
-    // ✅ Android notification channel setup
+    // ✅ Android notification channel
     if (Platform.OS === "android") {
       Notifications.setNotificationChannelAsync("default", {
         name: "default",
@@ -46,7 +47,6 @@ export default function App() {
       });
     }
 
-    // ✅ Clean up on unmount
     return () => {
       if (cleanup) cleanup();
       console.log("🧹 Notification listeners cleaned up");
@@ -74,6 +74,10 @@ export default function App() {
           component={NotificationScreen}
         />
         <Stack.Screen name="TrendLineScreen" component={TrendLineScreen} />
+        <Stack.Screen
+          name="DeviceStatusScreen"
+          component={DeviceStatusScreen}
+        /> 
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

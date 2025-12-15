@@ -27,12 +27,13 @@ const HomeScreen = ({ navigation }) => {
  const [userId, setUserId] = useState(null);
  const [token, setToken] = useState(null);
 
- const [deviceStatus, setDeviceStatus] = useState(null);
- const [deviceInfo, setDeviceInfo] = useState(null);
+ // **[REMOVED: deviceStatus and deviceInfo states]**
+ // const [deviceStatus, setDeviceStatus] = useState(null);
+ // const [deviceInfo, setDeviceInfo] = useState(null);
 
  const [waterRate, setWaterRate] = useState("");
 
- // Function to handle the water rate update API call
+ // Function to handle the water rate update API call (UNMODIFIED)
  const updateWaterRate = async () => {
   if (!waterRate || isNaN(waterRate) || Number(waterRate) < 0) {
    Alert.alert("Invalid Rate", "Please enter a valid non-negative number.");
@@ -70,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
   }
  };
 
- // Loads user data from AsyncStorage (might load old hashed data)
+ // Loads user data from AsyncStorage (UNMODIFIED LOGIC)
  const loadStoredUser = async () => {
   try {
    const storedUser = await AsyncStorage.getItem("user");
@@ -80,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
 
    const parsed = JSON.parse(storedUser);
    setUserId(parsed.user_id);
-   setFirstName(parsed.first_name || ""); // Sets state, potentially with old hashed data
+   setFirstName(parsed.first_name || "");
    setToken(storedToken);
    setWaterRate(parsed.water_rate ? String(parsed.water_rate) : "");
 
@@ -101,13 +102,10 @@ const HomeScreen = ({ navigation }) => {
  };
 
  /**
- * Fetches latest user data from backend.
- * NOTE: We now call the /profile route which is guaranteed to return
- * the decrypted user object (PLAINTEXT FIRST NAME, etc.).
+ * Fetches latest user data from backend. (UNMODIFIED)
  */
  const fetchUserFromBackend = async (uid, tok) => {
   try {
-   // === MODIFICATION: Call the /profile route instead of /home ===
    const response = await fetch(`${API_BASE_URL}/profile/${uid}`, {
     headers: { Authorization: `Bearer ${tok}` },
    });
@@ -115,9 +113,8 @@ const HomeScreen = ({ navigation }) => {
    const data = await response.json();
 
    if (response.ok && data.success && data.user) {
-    // ⭐ CRITICAL: These are now the plaintext values from the backend
     setFirstName(data.user.first_name || ""); 
-    setWaterRate(data.user.water_rate ? String(data.user.water_rate) : ""); // Also ensure rate is updated
+    setWaterRate(data.user.water_rate ? String(data.user.water_rate) : ""); 
 
     if (data.user.profile_image) {
      const url = data.user.profile_image.startsWith("http")
@@ -128,7 +125,6 @@ const HomeScreen = ({ navigation }) => {
      setProfileImage(null);
     }
 
-    // Store the fully retrieved, PLAINTEXT user object for future quick loads
     await AsyncStorage.setItem("user", JSON.stringify(data.user));
    }
   } catch (err) {
@@ -136,52 +132,24 @@ const HomeScreen = ({ navigation }) => {
   }
  };
 
- // Fetches the status of the user's registered device
+ // **[REMOVED: fetchDeviceStatus function]**
+ /*
  const fetchDeviceStatus = async () => {
-  if (!userId) return;
-
-  try {
-   const headers = {};
-   if (token) headers.Authorization = `Bearer ${token}`;
-
-   const res = await fetch(`${API_BASE_URL}/device/${userId}`, {
-    method: "GET",
-    headers,
-   });
-
-   const data = await res.json();
-
-   if (data.success && Array.isArray(data.devices)) {
-    if (data.devices.length > 0) {
-     const device = data.devices[0];
-     setDeviceInfo(device);
-     setDeviceStatus(device.device_status || null);
-    } else {
-     setDeviceInfo(null);
-     setDeviceStatus(null);
-    }
-   }
-  } catch (err) {
-   console.error("fetchDeviceStatus error:", err);
-   setDeviceInfo(null);
-   setDeviceStatus(null);
-  }
+  // ... (logic removed)
  };
+ */
 
- // Load user on screen focus (e.g., when returning from profile screen)
+ // Load user on screen focus (UNMODIFIED LOGIC)
  useFocusEffect(
   useCallback(() => {
    let isActive = true;
    (async () => {
-    // Load initial data from storage (might be hashed, but needed for user_id/token)
     const ok = await loadStoredUser();
     
-    // If credentials loaded, fetch latest plaintext data from backend immediately
     if (ok) {
      const storedUser = JSON.parse(await AsyncStorage.getItem("user"));
      const storedToken = await AsyncStorage.getItem("token");
      if (isActive) {
-      // This now calls fetchUserFromBackend which uses the reliable /profile endpoint
       await fetchUserFromBackend(storedUser.user_id, storedToken);
      }
     }
@@ -192,16 +160,14 @@ const HomeScreen = ({ navigation }) => {
   }, [])
  );
 
- // Initial load and notification setup
+ // Initial load and notification setup (UNMODIFIED LOGIC)
  useEffect(() => {
-  // Initial data fetch if state variables are null
   (async () => {
    if (!userId || !token) {
     await loadStoredUser();
    }
   })();
 
-  // Set up notification listener
   const unsubscribe = listenForNotifications((notif) => {
    Alert.alert(notif.request.content.title, notif.request.content.body);
   });
@@ -209,7 +175,8 @@ const HomeScreen = ({ navigation }) => {
   return () => unsubscribe && unsubscribe();
  }, []);
 
- // Poll device status every 10 seconds if user is logged in
+ // **[REMOVED: Polling useEffect]**
+ /*
  useEffect(() => {
   let interval = null;
 
@@ -223,17 +190,23 @@ const HomeScreen = ({ navigation }) => {
 
   return () => clearInterval(interval);
  }, [userId, token]);
+ */
 
- // Function to navigate to profile screen
+ // Function to navigate to profile screen (UNMODIFIED)
  const navigateToProfile = () => {
   navigation.navigate("ProfileScreen", { user_id: userId });
+ };
+
+ // Function to navigate to device status screen (NEW)
+ const navigateToDeviceStatus = () => {
+  // Pass userId and token to the new screen
+  navigation.navigate("DeviceStatusScreen", { user_id: userId, token: token });
  };
  
  return (
   <View style={styles.container}>
-   {/* HEADER */}
+   {/* HEADER (UNMODIFIED) */}
    <View style={styles.header}>
-    {/* Profile Info (Clickable) */}
     <TouchableOpacity style={styles.headerLeft} onPress={navigateToProfile}>
      <View style={styles.profileCircle}>
       <Image
@@ -249,16 +222,13 @@ const HomeScreen = ({ navigation }) => {
        style={styles.profileImage}
       />
      </View>
-     {/* Displays the firstName state, which should be updated to plaintext by fetchUserFromBackend */}
      <Text style={styles.greeting}>Hello, {firstName || "User"}!</Text>
     </TouchableOpacity>
-
-    {/* Header Right - Notifications icon block removed */}
     <View style={{ width: 28 }} />
    </View>
 
    <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-    {/* Date Section */}
+    {/* Date Section (UNMODIFIED) */}
     <View style={styles.dateContainer}>
      <Text style={styles.dayText}>
       {new Date().toLocaleDateString("en-US", { weekday: "long" })}
@@ -274,7 +244,7 @@ const HomeScreen = ({ navigation }) => {
 
     <Text style={styles.sectionTitleDashboard}>Dashboard</Text>
 
-    {/* Dashboard Cards */}
+    {/* Dashboard Cards (UNMODIFIED) */}
     <View style={styles.dashboard}>
      <TouchableOpacity
       style={[styles.card, { backgroundColor: "#1E3D6B" }]}
@@ -299,27 +269,21 @@ const HomeScreen = ({ navigation }) => {
      </TouchableOpacity>
     </View>
 
-    {/* DEVICE STATUS */}
-    <View style={styles.deviceCardWrapper}>
+    {/* DEVICE STATUS (MODIFIED: Now a TouchableOpacity) */}
+    <TouchableOpacity onPress={navigateToDeviceStatus} style={styles.deviceCardWrapper}>
      <View style={styles.deviceCard}>
       <Text style={styles.deviceCardTitle}>Device Status</Text>
+      {/* Show a simple prompt to check the status on the new screen */}
       <Text style={styles.deviceCardSubtitle}>
-       {deviceInfo?.device_serial
-        ? `Serial: ${deviceInfo.device_serial}`
-        : "No registered device found."}
+       Tap to view device details and live status.
       </Text>
-
       <Text style={styles.deviceStatusText}>
-       {deviceInfo == null && deviceStatus == null
-        ? "Connect a device"
-        : deviceStatus === "Active"
-        ? "🟢 Online"
-        : "🔴 Offline"}
+       View Details
       </Text>
      </View>
-    </View>
+    </TouchableOpacity>
 
-    {/* WATER RATE INPUT */}
+    {/* WATER RATE INPUT (UNMODIFIED) */}
     <View style={styles.waterRateContainer}>
      <Text style={styles.waterRateLabel}>Water Rate (₱ per m³)</Text>
 
@@ -339,7 +303,7 @@ const HomeScreen = ({ navigation }) => {
      </TouchableOpacity>
     </View>
 
-    {/* LINK TO TREND LINE SCREEN */}
+    {/* LINK TO TREND LINE SCREEN (UNMODIFIED) */}
     <TouchableOpacity
      onPress={() => navigation.navigate("TrendLineScreen")}
      style={styles.trendLineLink}
@@ -350,9 +314,8 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
    </ScrollView>
 
-   {/* FOOTER */}
+   {/* FOOTER (UNMODIFIED) */}
    <View style={styles.footer}>
-    {/* Trend Line (Inactive) */}
     <TouchableOpacity
      style={styles.footerIcon}
      onPress={() =>
@@ -362,7 +325,6 @@ const HomeScreen = ({ navigation }) => {
      <Ionicons name="stats-chart-outline" size={28} color="#666" />
     </TouchableOpacity>
 
-    {/* Home (Active) */}
     <TouchableOpacity
      style={styles.footerIcon}
      onPress={() => navigation.navigate("HomeScreen", { user_id: userId })}
@@ -372,7 +334,6 @@ const HomeScreen = ({ navigation }) => {
      </View>
     </TouchableOpacity>
 
-    {/* Profile (Inactive) */}
     <TouchableOpacity
      style={styles.footerIcon}
      onPress={navigateToProfile}
