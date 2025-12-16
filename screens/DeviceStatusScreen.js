@@ -28,6 +28,10 @@ const DeviceStatusScreen = ({ navigation }) => {
     const [deviceInfo, setDeviceInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    // 🔢 Latest meter reading
+    const [latestReading, setLatestReading] = useState(null);
+    const [readingTime, setReadingTime] = useState(null);
+
     // --- Navigation ---
     const navigateToProfile = () => {
         navigation.navigate("ProfileScreen", { user_id: userId, token });
@@ -73,16 +77,49 @@ const DeviceStatusScreen = ({ navigation }) => {
         }
     };
 
+    // --- Fetch Latest Water Reading (✅ FIXED URL) ---
+    const fetchLatestReading = async () => {
+        if (!userId || !token) return;
+
+        try {
+            const res = await fetch(
+                `${API_BASE_URL}/water/latest-reading/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = await res.json();
+            console.log("Latest reading response:", data);
+
+            if (data.success && data.data) {
+                setLatestReading(data.data.reading_5digit);
+                setReadingTime(data.data.timestamp);
+            } else {
+                setLatestReading(null);
+                setReadingTime(null);
+            }
+        } catch (err) {
+            console.error("fetchLatestReading error:", err);
+        }
+    };
+
     // --- Polling ---
     useEffect(() => {
         let interval;
         let isActive = true;
 
         fetchDeviceStatus();
+        fetchLatestReading();
 
         if (userId && token) {
             interval = setInterval(() => {
-                if (isActive) fetchDeviceStatus();
+                if (isActive) {
+                    fetchDeviceStatus();
+                    fetchLatestReading();
+                }
             }, 10000);
         }
 
@@ -102,7 +139,9 @@ const DeviceStatusScreen = ({ navigation }) => {
             return (
                 <View style={statusStyles.statusContainer}>
                     <ActivityIndicator size="large" />
-                    <Text style={statusStyles.loadingText}>Fetching Device Status...</Text>
+                    <Text style={statusStyles.loadingText}>
+                        Fetching Device Status...
+                    </Text>
                 </View>
             );
         }
@@ -111,7 +150,9 @@ const DeviceStatusScreen = ({ navigation }) => {
             return (
                 <View style={statusStyles.statusContainer}>
                     <Ionicons name="alert-circle-outline" size={60} color="#999" />
-                    <Text style={statusStyles.mainStatusText}>No Device Connected</Text>
+                    <Text style={statusStyles.mainStatusText}>
+                        No Device Connected
+                    </Text>
                     <Text style={statusStyles.detailText}>
                         Please register your water meter device.
                     </Text>
@@ -122,7 +163,7 @@ const DeviceStatusScreen = ({ navigation }) => {
         return (
             <View style={statusStyles.statusContainer}>
 
-                {/* ✅ LIVE CAMERA STREAM */}
+                {/* 📷 LIVE CAMERA STREAM */}
                 <View style={statusStyles.cameraViewWrapper}>
                     <WebView
                         source={{ uri: RASPI_STREAM_URL }}
@@ -134,7 +175,24 @@ const DeviceStatusScreen = ({ navigation }) => {
                     />
                 </View>
 
-                {/* Status */}
+                {/* 🔢 LATEST METER READING */}
+                <View style={statusStyles.readingBox}>
+                    <Text style={statusStyles.readingLabel}>
+                        Latest Meter Reading
+                    </Text>
+
+                    <Text style={statusStyles.readingValue}>
+                        {latestReading !== null ? latestReading : "--"}
+                    </Text>
+
+                    {readingTime && (
+                        <Text style={statusStyles.readingTime}>
+                            Updated: {new Date(readingTime).toLocaleString()}
+                        </Text>
+                    )}
+                </View>
+
+                {/* ☁️ STATUS */}
                 <Ionicons name={statusIcon} size={80} color={statusColor} />
                 <Text style={[statusStyles.mainStatusText, { color: statusColor }]}>
                     {statusText}
@@ -144,9 +202,11 @@ const DeviceStatusScreen = ({ navigation }) => {
                     The device is currently {statusText.toLowerCase()}.
                 </Text>
 
-                {/* Device Info */}
+                {/* 📋 DEVICE INFO */}
                 <View style={statusStyles.deviceDetails}>
-                    <Text style={statusStyles.detailHeader}>Device Information</Text>
+                    <Text style={statusStyles.detailHeader}>
+                        Device Information
+                    </Text>
 
                     <Text style={statusStyles.detailItem}>
                         <Text style={statusStyles.detailLabel}>Serial:</Text>{' '}
@@ -176,7 +236,10 @@ const DeviceStatusScreen = ({ navigation }) => {
             {/* Header */}
             <View style={homeStyles.header}>
                 <TouchableOpacity style={homeStyles.headerLeft}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 15 }}>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={{ marginRight: 15 }}
+                    >
                         <Ionicons name="arrow-back" size={28} color="#fff" />
                     </TouchableOpacity>
                     <Text style={homeStyles.greeting}>Device Status</Text>
@@ -184,8 +247,16 @@ const DeviceStatusScreen = ({ navigation }) => {
             </View>
 
             {/* Content */}
-            <ScrollView style={homeStyles.scrollView} showsVerticalScrollIndicator={false}>
-                <Text style={[homeStyles.sectionTitleDashboard, { marginBottom: 20 }]}>
+            <ScrollView
+                style={homeStyles.scrollView}
+                showsVerticalScrollIndicator={false}
+            >
+                <Text
+                    style={[
+                        homeStyles.sectionTitleDashboard,
+                        { marginBottom: 20 }
+                    ]}
+                >
                     Live Connection
                 </Text>
 
@@ -198,18 +269,26 @@ const DeviceStatusScreen = ({ navigation }) => {
             <View style={homeStyles.footer}>
                 <TouchableOpacity
                     style={homeStyles.footerIcon}
-                    onPress={() => navigation.navigate("TrendLineScreen", { user_id: userId })}
+                    onPress={() =>
+                        navigation.navigate("TrendLineScreen", { user_id: userId })
+                    }
                 >
                     <Ionicons name="stats-chart-outline" size={28} color="#666" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={homeStyles.footerIcon} onPress={navigateToHome}>
+                <TouchableOpacity
+                    style={homeStyles.footerIcon}
+                    onPress={navigateToHome}
+                >
                     <View style={homeStyles.activeIconWrapper}>
                         <Ionicons name="home-sharp" size={28} color="#1E3D6B" />
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={homeStyles.footerIcon} onPress={navigateToProfile}>
+                <TouchableOpacity
+                    style={homeStyles.footerIcon}
+                    onPress={navigateToProfile}
+                >
                     <Ionicons name="person-outline" size={28} color="#666" />
                 </TouchableOpacity>
             </View>
