@@ -15,8 +15,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.jonathan.aquameter",
-      "config": {
-      },
       "infoPlist": {
         "UIBackgroundModes": [
           "remote-notification"
@@ -26,6 +24,7 @@
     },
     "android": {
       "package": "com.jonathan.clearmeter",
+      "usesCleartextTraffic": true,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
