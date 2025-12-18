@@ -15,8 +15,9 @@ import { styles as homeStyles } from './styles/HomeScreenStyle.js';
 import { styles as statusStyles } from './styles/DeviceStatusScreenStyle.js';
 
 const API_BASE_URL = "https://aquameter-backend-8u1x.onrender.com";
-// Fallback in case Ngrok URL fails
-const PI_LOCAL_URL = "http://192.168.254.114:8000";
+
+// Use Raspberry Pi's local IP here
+const PI_LOCAL_URL = "http://10.171.59.173:8000";
 
 const DeviceStatusScreen = ({ navigation }) => {
     const route = useRoute();
@@ -29,28 +30,10 @@ const DeviceStatusScreen = ({ navigation }) => {
     const [latestReading, setLatestReading] = useState(null);
     const [readingTime, setReadingTime] = useState(null);
 
-    const [streamUrl, setStreamUrl] = useState(null);
+    const [streamUrl, setStreamUrl] = useState(`${PI_LOCAL_URL}/stream.mjpeg`);
 
     const navigateToProfile = () => navigation.navigate("ProfileScreen", { user_id: userId, token });
     const navigateToHome = () => navigation.navigate("HomeScreen", { user_id: userId, token });
-
-    // -------------------------
-    // Fetch Ngrok URL dynamically
-    // -------------------------
-    const fetchNgrokUrl = async () => {
-        try {
-            const res = await fetch(`${PI_LOCAL_URL}/ngrok-url`);
-            const data = await res.json();
-            if (data.ngrok_url) {
-                setStreamUrl(`${data.ngrok_url}/stream.mjpeg`);
-            } else {
-                setStreamUrl(`${PI_LOCAL_URL}/stream.mjpeg`);
-            }
-        } catch (err) {
-            console.warn("Unable to fetch Ngrok URL, using local IP:", err);
-            setStreamUrl(`${PI_LOCAL_URL}/stream.mjpeg`);
-        }
-    };
 
     // -------------------------
     // Fetch Device Status / Latest Reading
@@ -96,12 +79,10 @@ const DeviceStatusScreen = ({ navigation }) => {
     // Initial fetch and interval
     // -------------------------
     useEffect(() => {
-        fetchNgrokUrl(); // get dynamic Ngrok URL
         fetchDeviceStatus();
         fetchLatestReading();
 
         const interval = setInterval(() => {
-            fetchNgrokUrl(); // refresh Ngrok URL in case it changes
             fetchDeviceStatus();
             fetchLatestReading();
         }, 10000); // every 10s
@@ -147,11 +128,6 @@ const DeviceStatusScreen = ({ navigation }) => {
                         <Text style={statusStyles.detailText}>Fetching camera stream...</Text>
                     )}
                 </View>
-
-                <Text style={statusStyles.detailTextSmall}>Active Camera Stream:</Text>
-                <Text style={[statusStyles.detailText, { fontWeight: "bold" }]}>
-                    {streamUrl ?? "--"}
-                </Text>
 
                 <View style={statusStyles.readingBox}>
                     <Text style={statusStyles.readingLabel}>Latest Meter Reading</Text>
